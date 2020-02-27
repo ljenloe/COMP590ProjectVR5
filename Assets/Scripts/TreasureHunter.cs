@@ -14,7 +14,7 @@ public class TreasureHunter : MonoBehaviour
 OVRManager oVRManager;
 
 OVRHeadsetEmulator oVRHeadsetEmulator;
-Camera viewpointCamera;
+public Camera viewpointCamera;
 
     public collectible[] collectiblesInScene;
     public TreasureHunterInventory inventory;
@@ -50,6 +50,11 @@ Camera viewpointCamera;
 
     collectible thingIGrabbed;
     GameObject thingOnGun;
+
+    public GameObject upperPlane;
+          bool loseGame = false;
+
+    public TextMesh skimbleLyrics;
 
     
 
@@ -145,8 +150,16 @@ Camera viewpointCamera;
                 thingIGrabbed=nearestCollectible.gameObject.GetComponent<collectible>();
             }
         }
+
         else if(thingIGrabbed!=null) {
-            if(thingIGrabbed.transform.position.y<=-.55) {
+          //  if(thingIGrabbed.transform.position.y<=-.55) {
+            if (rightPointerObject.gameObject.transform.position.x < viewpointCamera.transform.position.x + .2 && 
+            rightPointerObject.gameObject.transform.position.x > viewpointCamera.transform.position.x - .2 &&
+            rightPointerObject.gameObject.transform.position.y < viewpointCamera.transform.position.y - .3 &&
+            rightPointerObject.gameObject.transform.position.y > viewpointCamera.transform.position.y - .6 &&
+            rightPointerObject.gameObject.transform.position.z < viewpointCamera.transform.position.z + .2 &&
+            rightPointerObject.gameObject.transform.position.z > viewpointCamera.transform.position.z - .2
+            ) {
             if(thingIGrabbed.treasureName=="Sphere") {
                 spheresCollected++;
             }
@@ -155,6 +168,9 @@ Camera viewpointCamera;
             }
             else if(thingIGrabbed.treasureName=="Capsule") {
                 capsulesCollected++;
+                Destroy(upperPlane.gameObject);
+                loseGame=true;
+                
             }
             else {
                 cubesCollected++;
@@ -162,8 +178,15 @@ Camera viewpointCamera;
             Destroy(thingIGrabbed.gameObject);
             thingIGrabbed=null;
             totalCollected++;
-            wealthDisplay.text = "LJ Enloe\n" + totalCollected + " Total\n" + spheresCollected + " Spheres ($1)\n" + cylindersCollected + " Cylinders ($10)\n" + cubesCollected + " Cubes ($5)\n" + capsulesCollected + " Capsules ($100)\n" + "Wealth: $" + (spheresCollected + 10*cylindersCollected + 5*cubesCollected + 100*capsulesCollected);
+            wealthDisplay.text = "LJ Enloe\n Bea Manaligod" + totalCollected + " Total\n" + spheresCollected + " Spheres ($1)\n" + cylindersCollected + " Cylinders ($10)\n" + cubesCollected + " Cubes ($5)\n" + capsulesCollected + " Capsules ($100)\n" + "Wealth: $" + (spheresCollected + 10*cylindersCollected + 5*cubesCollected + 100*capsulesCollected);
+            if(loseGame==true) {
+                wealthDisplay.text="YOU LOSE";
+                // skimbleLyrics.text="Skimbleshanks, the Railway Cat \nThe Cat of the Railway Train \nThere's a whisper down the line \nAt eleven thirty-nine\nWhen the Night Mails ready to depart\nSaying, Skimble, where is Skimble?\nHas he gone to hunt the thimble?\nWe must find him or the train cant start!\nAll the guards and all the porters\nAnd the stationmaster's daughters\nWould be searching high and low\nSaying Skimble, where is Skimble?\nFor unless he's very nimble\nThen the Night Mail just can't go.\nAt eleven forty-two\nWith the signal overdue\nAnd the passengers all frantic to a man\nThat's when I would appear\nAnd I'd saunter to the rear\nI'd been busy in the luggage van!\nThen he gives one flash\nOf his glass-green eyes\nAnd the signal goes All Clear!\nAnd we're off at last\nFor the northern part\nOf the Northern Hemisphere!\nSkimbleshanks, the Railway Cat\nSkimbleshanks, the Railway Cat\nSkimbleshanks\nSkimbleshanks\nSkimbleshanks, the Railway Cat\nThe Cat of the Railway Train\nYou could say that by and large\nIt was me who was in charge\nOf the Sleeping Car Express\nFrom the driver and the guards\nTo the bagmen playing cards\nI would supervise them all, more or less\nI will watch without winking\nAnd I'll see what you are thinking\nAnd it's certain that I wouldn't approve\nOf hilarity and riot\nSo the folk are very quiet\nWhen Skimble is about and on the move\nYou can play no pranks with Skimbleshanks\nI'm a Cat that cannot be ignored!\nSo nothing goes wrong\nOn the Northern Mail\nWhen Skimbleshanks is aboard\nOh, it's very pleasant\nWhen you've found your little den\nWith your name written up on the door (Woo! Woo!)\nAnd the berth is very neat\nWith a newly folded sheet\nAnd there's not a speck of dust on the floor\nThen the guard looks in politely\nAnd will ask you very brightly\nDo you like your morning tea?\n(Weak or strong)\nBut I was just behind him\nAnd was ready to remind him\nFor Skimble won't let anything go wrong\nWhen you creep into your cozy berths and pull up the counterpane\nYou ought to reflect that it's very nice\nTo know that you won't be bothered by mice\nYou can leave all that to the Railway Cat\nThe Cat of the Railway Train\nSkimbleshanks, the Railway Cat (Skimbleshanks)\nThe Cat of the Railway Train\nAnd he gives you a wave\nOf his long brown tail\nWhich says, I'll see you again!\nYou will meet without fail\nOn the Midnight Mail\nThe Cat of the Railway Train!";
+            }
         }
+        }
+        if(capsulesCollected+cylindersCollected+cubesCollected+spheresCollected>=5) {
+            wealthDisplay.text = "YOU WON!";
         }
         previousPointerPos=rightPointerObject.gameObject.transform.position;
     }
